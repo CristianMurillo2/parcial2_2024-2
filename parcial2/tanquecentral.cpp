@@ -4,6 +4,18 @@ TanqueCentral::TanqueCentral(double capReg, double capPrem, double capEco) :
     capacidadRegular(capReg), capacidadPremium(capPrem), capacidadEcoExtra(capEco),
     disponibleRegular(capReg), disponiblePremium(capPrem), disponibleEcoExtra(capEco) {}
 
+double TanqueCentral::getCapacidadRegular() const { return capacidadRegular; }
+double TanqueCentral::getCapacidadPremium() const { return capacidadPremium; }
+double TanqueCentral::getCapacidadEcoExtra() const { return capacidadEcoExtra; }
+double TanqueCentral::getDisponibleRegular() const { return disponibleRegular; }
+double TanqueCentral::getDisponiblePremium() const { return disponiblePremium; }
+double TanqueCentral::getDisponibleEcoExtra() const { return disponibleEcoExtra; }
+
+// Setters
+void TanqueCentral::setDisponibleRegular(double cantidad) { disponibleRegular = cantidad; }
+void TanqueCentral::setDisponiblePremium(double cantidad) { disponiblePremium = cantidad; }
+void TanqueCentral::setDisponibleEcoExtra(double cantidad) { disponibleEcoExtra = cantidad; }
+
 void TanqueCentral::actualizarCombustible(const string& categoria, double cantidad) {
     if (categoria == "Regular") {
         disponibleRegular -= cantidad;
@@ -22,7 +34,13 @@ double TanqueCentral::obtenerDisponible(const string& categoria) {
 }
 
 void TanqueCentral::mostrarEstado() const {
-    std::cout << "Combustible Regular: " << disponibleRegular << " litros\n";
-    std::cout << "Combustible Premium: " << disponiblePremium << " litros\n";
-    std::cout << "Combustible EcoExtra: " << disponibleEcoExtra << " litros\n";
+    cout << "Combustible Regular: " << disponibleRegular << " litros\n";
+    cout << "Combustible Premium: " << disponiblePremium << " litros\n";
+    cout << "Combustible EcoExtra: " << disponibleEcoExtra << " litros\n";
+}
+ostream& operator<<(ostream& os, const TanqueCentral& tanque) {
+    os << "Combustible Regular: " << tanque.disponibleRegular << " litros\n";
+    os << "Combustible Premium: " << tanque.disponiblePremium << " litros\n";
+    os << "Combustible EcoExtra: " << tanque.disponibleEcoExtra << " litros\n";
+    return os;
 }

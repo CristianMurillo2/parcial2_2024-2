@@ -7,22 +7,41 @@ using namespace std;
 
 class EstacionServicio
 {
-public:
+private:
     string nombre;
-    int codigoIdentificador;
+    string codigoIdentificador;
     string gerente;
     string region;
     double coordenadasGPS[2];
-    TanqueCentral tanqueCentral;
+    TanqueCentral* tanque;
     Surtidor** surtidores;
     int numeroSurtidores;
-    int capacidadSurtidores;
-    EstacionServicio(string nom, int cod, string ger, string reg, double coordGPS[2], TanqueCentral tanque, int capacidad);
-    void agregarSurtidor(Surtidor* surtidor);
-    void registrarVenta(int codigoSurtidor, const string& fecha, const string& hora, double cantidad, const string& categoriaCombustible, const string& metodoPago, const string& numeroDocumentoCliente);
-    void mostrarEstadoTanque();
+
+public:
+    EstacionServicio(const string& nombre, const string& codigo, const string& gerente, const string& region, double latitud, double longitud, TanqueCentral* tanqueCentral, int numSurtidores);
     ~EstacionServicio();
 
+    string getNombre() const;
+    string getCodigoIdentificador() const;
+    string getGerente() const;
+    string getRegion() const;
+    double getLatitud() const;
+    double getLongitud() const;
+    TanqueCentral* getTanque() const;
+    Surtidor** getSurtidores() const;
+    int getNumeroSurtidores() const;
+
+    void setNombre(const string& nombre);
+    void setCodigoIdentificador(const string& codigo);
+    void setGerente(const string& gerente);
+    void setRegion(const string& region);
+    void setCoordenadas(double latitud, double longitud);
+    void setTanque(TanqueCentral* tanqueCentral);
+    void agregarSurtidor(Surtidor* surtidor, int index);
+    static EstacionServicio** eliminarEstacion(EstacionServicio** estaciones, int& numeroEstaciones, const string& codigo);
+    static EstacionServicio** agregarEstacion(EstacionServicio** estaciones, int& numeroEstaciones, EstacionServicio* nuevaEstacion);
+    void mostrarInformacion() const;
+    friend ostream& operator<<(ostream& os, const EstacionServicio& estacion);
 };
 
 #endif // ESTACIONSERVICIO_H
