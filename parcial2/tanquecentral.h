@@ -17,7 +17,6 @@ private:
 
 public:
     TanqueCentral(double capReg, double capPrem, double capEco);
-
     double getCapacidadRegular() const;
     double getCapacidadPremium() const;
     double getCapacidadEcoExtra() const;

@@ -20,7 +20,6 @@ private:
 public:
     EstacionServicio(const string& nombre, const string& codigo, const string& gerente, const string& region, double latitud, double longitud, TanqueCentral* tanqueCentral, int numSurtidores);
     ~EstacionServicio();
-
     string getNombre() const;
     string getCodigoIdentificador() const;
     string getGerente() const;
@@ -30,16 +29,16 @@ public:
     TanqueCentral* getTanque() const;
     Surtidor** getSurtidores() const;
     int getNumeroSurtidores() const;
-
     void setNombre(const string& nombre);
     void setCodigoIdentificador(const string& codigo);
     void setGerente(const string& gerente);
     void setRegion(const string& region);
     void setCoordenadas(double latitud, double longitud);
     void setTanque(TanqueCentral* tanqueCentral);
-    void agregarSurtidor(Surtidor* surtidor, int index);
     static EstacionServicio** eliminarEstacion(EstacionServicio** estaciones, int& numeroEstaciones, const string& codigo);
     static EstacionServicio** agregarEstacion(EstacionServicio** estaciones, int& numeroEstaciones, EstacionServicio* nuevaEstacion);
+    void agregarSurtidor(Surtidor* nuevoSurtidor);
+    void eliminarSurtidor(int codigoIdentificador);
     void mostrarInformacion() const;
     friend ostream& operator<<(ostream& os, const EstacionServicio& estacion);
 };

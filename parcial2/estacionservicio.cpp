@@ -37,12 +37,6 @@ void EstacionServicio::setCoordenadas(double latitud, double longitud) {
 }
 void EstacionServicio::setTanque(TanqueCentral* tanqueCentral) { tanque = tanqueCentral; }
 
-void EstacionServicio::agregarSurtidor(Surtidor* surtidor, int index) {
-    if (index >= 0 && index < numeroSurtidores) {
-        surtidores[index] = surtidor;
-    }
-}
-
 void EstacionServicio::mostrarInformacion() const {
     cout << "Nombre de la Estación: " << nombre << "\n";
     cout << "Código: " << codigoIdentificador << "\n";
@@ -111,17 +105,54 @@ EstacionServicio** EstacionServicio::agregarEstacion(EstacionServicio** estacion
     cout << "Estación agregada exitosamente.\n";
     return nuevoArreglo;
 }
+void agregarSurtidor(Surtidor* nuevoSurtidor) {
+    Surtidor** nuevosSurtidores = new Surtidor*[numeroSurtidores + 1];
+        for (int i = 0; i < numeroSurtidores; i++) {
+        nuevosSurtidores[i] = surtidor[i];
+    }
+        nuevosSurtidores[numeroSurtidores] = nuevoSurtidor;
+        delete[] surtidores;
+        surtidores = nuevosSurtidores;
+    numeroSurtidores++;
+}
+
+void eliminarSurtidor(int codigoIdentificador) {
+    int index = -1;
+    for (int i = 0; i < numeroSurtidores; i++) {
+        if (surtidores[i]->getCodigoIdentificador() == codigoIdentificador) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) {
+        cout << "No se encontró el surtidor con el código " << codigoIdentificador << endl;
+        return;
+    }
+    delete surtidores[index];
+    Surtidor** nuevosSurtidores = new Surtidor*[numeroSurtidores - 1];
+    for (int i = 0, j = 0; i < numeroSurtidores; i++) {
+        if (i != index) {
+            nuevosSurtidores[j++] = surtidores[i];
+        }
+    }
+
+    delete[] surtidores;
+    Surtidores = nuevosSurtidores;
+    numeroSurtidores--;
+
+    cout << "Surtidor con el código " << codigoIdentificador << " eliminado correctamente." << endl;
+}
+
 ostream& operator<<(ostream& os, const EstacionServicio& estacion) {
     os << "Nombre de la Estación: " << estacion.getNombre() << "\n";
     os << "Código: " << estacion.getCodigoIdentificador() << "\n";
     os << "Gerente: " << estacion.getGerente() << "\n";
     os << "Región: " << estacion.getRegion() << "\n";
     os << "Coordenadas: (" << estacion.getLatitud() << ", " << estacion.getLongitud() << ")\n";
-    os << *estacion.getTanque();  // Usamos el operador << sobrecargado de TanqueCentral
-
+    os << *estacion.getTanque();
     for (int i = 0; i < estacion.getNumeroSurtidores(); i++) {
         if (estacion.getSurtidores()[i] != nullptr) {
-            os << *estacion.getSurtidores()[i];  // Usamos el operador << sobrecargado de Surtidor
+            os << *estacion.getSurtidores()[i];
         }
     }
 

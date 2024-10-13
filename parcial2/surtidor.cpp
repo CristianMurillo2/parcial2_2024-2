@@ -35,21 +35,41 @@ void Surtidor::setVentasCantidadPremium(double cantidad) { ventasCantidadPremium
 void Surtidor::setVentasCantidadEcoExtra(double cantidad) { ventasCantidadEcoExtra = cantidad; }
 void Surtidor::incrementarNumeroVentas() { numeroVentas++; }
 
-void Surtidor::registrarVenta(const string& fecha, const string& hora, double cantidad, const string& categoriaCombustible, const string& metodoPago, const string& numeroDocumentoCliente, TanqueCentral& tanque) {
+void Surtidor::registrarVenta(const string& fecha, const string& hora, double cantidad, const string& categoriaCombustible, const string& metodoPago, const string& numeroDocumentoCliente, TanqueCentral& tanque)
+{
     if (numeroVentas < 100) {
-        if (categoriaCombustible == "Regular" && tanque.getDisponibleRegular() >= cantidad) {
-            tanque.actualizarCombustible(categoriaCombustible, cantidad);
-            ventasCantidadRegular += cantidad;
-        } else if (categoriaCombustible == "Premium" && tanque.getDisponiblePremium() >= cantidad) {
-            tanque.actualizarCombustible(categoriaCombustible, cantidad);
-            ventasCantidadPremium += cantidad;
-        } else if (categoriaCombustible == "EcoExtra" && tanque.getDisponibleEcoExtra() >= cantidad) {
-            tanque.actualizarCombustible(categoriaCombustible, cantidad);
-            ventasCantidadEcoExtra += cantidad;
+        double precio = 0.0;
+
+        if (categoriaCombustible == "Regular") {
+            if (tanque.getDisponibleRegular() >= cantidad) {
+                precio = estacionservicio.getPrecioRegular();
+                tanque.actualizarCombustible(categoriaCombustible, cantidad);
+                ventasCantidadRegular += cantidad;
+            } else {
+                std::cout << "No hay suficiente combustible Regular disponible para completar la venta.\n";
+                return;
+            }
+        } else if (categoriaCombustible == "Premium") {
+            if (tanque.getDisponiblePremium() >= cantidad) {
+                precio = estacionservicio.getPrecioPremium();
+                tanque.actualizarCombustible(categoriaCombustible, cantidad);
+                ventasCantidadPremium += cantidad;
+            } else {
+                std::cout << "No hay suficiente combustible Premium disponible para completar la venta.\n";
+                return;
+            }
+        } else if (categoriaCombustible == "EcoExtra") {
+            if (tanque.getDisponibleEcoExtra() >= cantidad) {
+                precio = estacionservicio.getPrecioEcoExtra();
+                tanque.actualizarCombustible(categoriaCombustible, cantidad);
+                ventasCantidadEcoExtra += cantidad;
+            } else {
+                cout << "No hay suficiente combustible EcoExtra disponible para completar la venta.\n";
+                return;
+            }
         } else {
-            cout << "No hay suficiente combustible disponible para completar la venta.\n";
+            cout << "Categoría de combustible no válida." << endl;
             return;
-        }
 
         fechas[numeroVentas] = fecha;
         horas[numeroVentas] = hora;
@@ -57,8 +77,13 @@ void Surtidor::registrarVenta(const string& fecha, const string& hora, double ca
         categoriasCombustible[numeroVentas] = categoriaCombustible;
         metodosPago[numeroVentas] = metodoPago;
         numerosDocumentoCliente[numeroVentas] = numeroDocumentoCliente;
-        totalesDinero[numeroVentas] = cantidad * 5000.0;
+        double totalDinero = cantidad * precio;
+        totalesDinero[numeroVentas] = totalDinero;
+
         incrementarNumeroVentas();
+        guardarVentaEnArchivo(fecha, hora, cantidad, categoriaCombustible, metodoPago, numeroDocumentoCliente, totalDinero);
+    } else {
+        cout << "Límite de ventas alcanzado.\n";
     }
 }
 
@@ -76,4 +101,21 @@ ostream& operator<<(ostream& os, const Surtidor& surtidor) {
     os << "Ventas Premium: " << surtidor.getVentasCantidadPremium() << " litros\n";
     os << "Ventas EcoExtra: " << surtidor.getVentasCantidadEcoExtra() << " litros\n";
     return os;
+}
+void Surtidor::guardarVentaEnArchivo(const string& fecha, const string& hora, double cantidad, const string& categoriaCombustible, const string& metodoPago, const string& numeroDocumentoCliente, double totalDinero)
+{
+    string nombreArchivo = "ventas_surtidor_" + to_string(codigoIdentificador) + ".txt";
+
+    ofstream archivoVentas(nombreArchivo, ios::app);
+
+    if (archivoVentas.is_open()) {
+        archivoVentas << "Fecha: " << fecha << ", Hora: " << hora << ", Cantidad: " << cantidad
+                      << ", Tipo Combustible: " << categoriaCombustible << ", Método Pago: " << metodoPago
+                      << ", Documento Cliente: " << numeroDocumentoCliente << ", Total: " << totalDinero << endl;
+
+        // Cerrar el archivo
+        archivoVentas.close();
+    } else {
+        cerr << "No se pudo abrir el archivo " << nombreArchivo << " para escribir la venta." << endl;
+    }
 }
